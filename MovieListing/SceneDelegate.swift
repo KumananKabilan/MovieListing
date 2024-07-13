@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let scene = (scene as? UIWindowScene) else { return }
+        guard let _ = (scene as? UIWindowScene) else { return }
         self.openListing()
     }
 
@@ -58,11 +58,15 @@ private extension SceneDelegate {
     func openListing() {
         let storyboard = UIStoryboard(name: "Listing", bundle: nil)
         guard let window,
-              let listingViewController = window.rootViewController as? ListingViewController
+              let listingViewController = window.rootViewController as? ListingViewController,
+              let appDelegate = (UIApplication.shared.delegate as? AppDelegate),
+              let persistentContainer = appDelegate.persistentContainer
         else {
             return
         }
 
-        listingViewController.viewModel = ListingViewModel()
+        listingViewController.viewModel = ListingViewModel(
+            managedObjectContext: persistentContainer.viewContext
+        )
     }
 }

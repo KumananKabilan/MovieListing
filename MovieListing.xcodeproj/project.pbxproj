@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F7E7EFF2C428A05002A583D /* PersistentContainerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7E7EFE2C428A05002A583D /* PersistentContainerWrapper.swift */; };
+		2F7E7F072C4292F4002A583D /* BehaviourSubjectHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7E7F062C4292F4002A583D /* BehaviourSubjectHelper.swift */; };
+		2F7E7F092C429578002A583D /* ArrayHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7E7F082C429578002A583D /* ArrayHelper.swift */; };
 		2FDA30612C424C9A00ED96CF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FDA30602C424C9A00ED96CF /* AppDelegate.swift */; };
 		2FDA30632C424C9A00ED96CF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FDA30622C424C9A00ED96CF /* SceneDelegate.swift */; };
 		2FDA30652C424C9A00ED96CF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FDA30642C424C9A00ED96CF /* ViewController.swift */; };
@@ -25,6 +28,9 @@
 
 /* Begin PBXFileReference section */
 		28AF65DA7301DF0083E754C6 /* Pods-MovieListing.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MovieListing.release.xcconfig"; path = "Target Support Files/Pods-MovieListing/Pods-MovieListing.release.xcconfig"; sourceTree = "<group>"; };
+		2F7E7EFE2C428A05002A583D /* PersistentContainerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentContainerWrapper.swift; sourceTree = "<group>"; };
+		2F7E7F062C4292F4002A583D /* BehaviourSubjectHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehaviourSubjectHelper.swift; sourceTree = "<group>"; };
+		2F7E7F082C429578002A583D /* ArrayHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayHelper.swift; sourceTree = "<group>"; };
 		2FDA305D2C424C9A00ED96CF /* MovieListing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MovieListing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FDA30602C424C9A00ED96CF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2FDA30622C424C9A00ED96CF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -56,6 +62,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2F7E7EFD2C4289E8002A583D /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				2F7E7EFE2C428A05002A583D /* PersistentContainerWrapper.swift */,
+				2F7E7F052C4292DB002A583D /* Helpers */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		2F7E7F052C4292DB002A583D /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				2F7E7F062C4292F4002A583D /* BehaviourSubjectHelper.swift */,
+				2F7E7F082C429578002A583D /* ArrayHelper.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		2FDA30542C424C9A00ED96CF = {
 			isa = PBXGroup;
 			children = (
@@ -77,6 +101,7 @@
 		2FDA305F2C424C9A00ED96CF /* MovieListing */ = {
 			isa = PBXGroup;
 			children = (
+				2F7E7EFD2C4289E8002A583D /* Common */,
 				2FE0D7222C42656A00299403 /* ListingPage */,
 				2FDA30602C424C9A00ED96CF /* AppDelegate.swift */,
 				2FDA30622C424C9A00ED96CF /* SceneDelegate.swift */,
@@ -261,9 +286,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F7E7EFF2C428A05002A583D /* PersistentContainerWrapper.swift in Sources */,
 				2FDA30652C424C9A00ED96CF /* ViewController.swift in Sources */,
 				2FDA30612C424C9A00ED96CF /* AppDelegate.swift in Sources */,
 				2FE0D7302C4267BB00299403 /* ListingTableViewCell.swift in Sources */,
+				2F7E7F092C429578002A583D /* ArrayHelper.swift in Sources */,
+				2F7E7F072C4292F4002A583D /* BehaviourSubjectHelper.swift in Sources */,
 				2FDA30632C424C9A00ED96CF /* SceneDelegate.swift in Sources */,
 				2FDA306B2C424C9A00ED96CF /* MovieListing.xcdatamodeld in Sources */,
 				2FE0D72D2C42660200299403 /* ListingViewState.swift in Sources */,
