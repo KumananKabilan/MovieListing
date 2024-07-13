@@ -5,12 +5,16 @@
 //  Created by Kumanan K on 13/07/24.
 //
 
+import RxSwift
 import UIKit
 
 class ListingViewController: UIViewController {
     // MARK: - Properties
 
     private let listingTableViewHeight: CGFloat = 44.0
+    private let disposeBag = DisposeBag()
+    private var stateRepresenting: ListingViewState = .default
+    var viewModel: ListingViewModel!
 
     // MARK: - IBOutlets
 
@@ -21,6 +25,7 @@ class ListingViewController: UIViewController {
 
         self.view.backgroundColor = .cyan
         self.configureTableView()
+        self.subscribeToStateChange()
     }
 }
 
@@ -35,13 +40,36 @@ private extension ListingViewController {
             forCellReuseIdentifier: "ListingTableViewCell"
         )
     }
+
+    func subscribeToStateChange() {
+        self.viewModel.stateChangeObservable.observe(on: MainScheduler.asyncInstance)
+            .subscribe { [weak self] event in
+                guard let self 
+                else {
+                    return
+                }
+
+                switch event {
+                case let .next(listingViewState):
+                    self.refreshViewState(using: listingViewState)
+                default:
+                    break
+                }
+            }
+            .disposed(by: self.disposeBag)
+    }
+
+    func refreshViewState(using listingViewState: ListingViewState) {
+        self.stateRepresenting = listingViewState
+        self.listingTableView.reloadData()
+    }
 }
 
 // MARK: - UITableViewDataSource Conformance
 
 extension ListingViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return self.stateRepresenting.titleArray.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -49,7 +77,7 @@ extension ListingViewController: UITableViewDataSource {
             return UITableViewCell()
         }
 
-        cell.configure(with: String(indexPath.row))
+        cell.configure(with: self.stateRepresenting.titleArray[indexPath.row])
 
         return cell
     }

@@ -2,6 +2,9 @@
 #
 build/
 DerivedData/
+*.xcworkspace
+Podfile.lock
+Pods/
 
 # Various settings files
 *.xcuserstate
