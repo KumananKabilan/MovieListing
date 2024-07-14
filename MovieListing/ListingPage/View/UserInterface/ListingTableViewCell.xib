@@ -45,8 +45,8 @@
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
                 <outlet property="collapseImageView" destination="brf-WV-TIn" id="f92-5s-TOp"/>
+                <outlet property="headerLabel" destination="kOP-aA-YZa" id="myZ-zU-T9u"/>
                 <outlet property="headerViewStackView" destination="dth-YV-khj" id="Dwg-fD-Y4G"/>
-                <outlet property="movieTitle" destination="kOP-aA-YZa" id="b93-n6-hhr"/>
                 <outlet property="stackViewLeadingConstraint" destination="Ocl-ib-PUk" id="zOd-KI-hGO"/>
             </connections>
             <point key="canvasLocation" x="-66" y="20"/>

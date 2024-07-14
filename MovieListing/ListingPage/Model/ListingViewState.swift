@@ -10,7 +10,9 @@ import Foundation
 struct ListingViewState {
     let coreDataActionState: CoreDataActionState
     let moviesArray: [MovieData]
-    let listingOptionValues: (ListingOptions, [String])
+    let selectedHeader: (ListingOptions, String, Int)
+    let sectionHeaders: [Any]
+    let cellItemData: [MovieData]
 
     enum CoreDataActionState {
         case none
@@ -27,18 +29,24 @@ extension ListingViewState {
     static let `default` = ListingViewState(
         coreDataActionState: .none,
         moviesArray: [],
-        listingOptionValues: (.none, [])
+        selectedHeader: (ListingOptions.none, "", -1),
+        sectionHeaders: ListingOptions.allOptions,
+        cellItemData: []
     )
 
     func copy(
         coreDataActionState: CoreDataActionState? = nil,
         moviesArray: [MovieData]? = nil,
-        listingOptionValues: (ListingOptions, [String])? = nil
+        selectedHeader: (ListingOptions, String, Int)? = nil,
+        sectionHeaders: [Any]? = nil,
+        cellItemData: [MovieData]? = nil
     ) -> ListingViewState {
         ListingViewState(
             coreDataActionState: coreDataActionState ?? self.coreDataActionState,
             moviesArray: moviesArray ?? self.moviesArray,
-            listingOptionValues: listingOptionValues ?? self.listingOptionValues
+            selectedHeader: selectedHeader ?? self.selectedHeader,
+            sectionHeaders: sectionHeaders ?? self.sectionHeaders,
+            cellItemData: cellItemData ?? self.cellItemData
         )
     }
 }

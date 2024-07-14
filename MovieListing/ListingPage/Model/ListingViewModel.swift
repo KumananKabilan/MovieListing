@@ -104,7 +104,7 @@ private extension ListingViewModel {
         )
     }
 
-    func initiateFetchFromCoreData() -> [MovieCoreData] {
+    func fetchFromCoreData() -> [MovieCoreData] {
         do {
             let fetchedData = try self.managedObjectContext.fetch(Movie.fetchRequest())
             return fetchedData.helperMovieData
@@ -119,7 +119,7 @@ private extension ListingViewModel {
     }
 
     func performCoreDataFetch() {
-        let moviesArray = self.initiateFetchFromCoreData()
+        let moviesArray = self.fetchFromCoreData()
         if moviesArray.isEmpty {
             self.importJSONData()
         }
@@ -149,58 +149,75 @@ private extension ListingViewModel {
 // MARK: - Helpers
 
 extension ListingViewModel {
-    func headerCellSelected(listingOption: ListingOptions) {
-        var listingOptionValues: (ListingOptions, [String])
-        switch listingOption {
-        case .none:
-            listingOptionValues.0 = .none
-            listingOptionValues.1 = []
-        case .year:
-            listingOptionValues.0 = .year
+    func headerCellSelected(index: Int) {
+        if let listingOption = self.currentState.sectionHeaders[index] as? ListingOptions {
+            if listingOption == self.currentState.selectedHeader.0 {
+                self.stateChangeObservable.onNext(
+                    self.currentState.copy(
+                        selectedHeader: (ListingOptions.none, "", -1),
+                        sectionHeaders: ListingOptions.allOptions
+                    )
+                )
+                return
+            }
+            var sectionHeaders: [Any] = []
+            sectionHeaders = ListingOptions.allOptions
             var array: [String] = []
             self.currentState.moviesArray.forEach { movieData in
-                if !array.contains(movieData.year) {
-                    array.append(movieData.year)
+                switch listingOption {
+                case .year:
+                    if !array.contains(movieData.year) {
+                        array.append(movieData.year)
+                    }
+                case .genre:
+                    movieData.genre.forEach { genre in
+                        if !array.contains(genre) {
+                            array.append(genre)
+                        }
+                    }
+                case .directors:
+                    movieData.director.forEach { director in
+                        if !array.contains(director) {
+                            array.append(director)
+                        }
+                    }
+                case .actors:
+                    movieData.actors.forEach { actor in
+                        if !array.contains(actor) {
+                            array.append(actor)
+                        }
+                    }
+                default:
+                    break
                 }
             }
-            listingOptionValues.1 = array
-        case .genre:
-            listingOptionValues.0 = .genre
-            var array: [String] = []
-            self.currentState.moviesArray.forEach { movieData in
-                if !array.contains(movieData.genre) {
-                    array.append(contentsOf: movieData.genre)
-                }
-            }
-            listingOptionValues.1 = array
-        case .directors:
-            listingOptionValues.0 = .directors
-            var array: [String] = []
-            self.currentState.moviesArray.forEach { movieData in
-                if !array.contains(movieData.director) {
-                    array.append(contentsOf: movieData.director)
-                }
-            }
-            listingOptionValues.1 = array
-        case .actors:
-            listingOptionValues.0 = .actors
-            var array: [String] = []
-            self.currentState.moviesArray.forEach { movieData in
-                if !array.contains(movieData.actors) {
-                    array.append(contentsOf: movieData.actors)
-                }
-            }
-            listingOptionValues.1 = array
-        case .allMovies:
-            listingOptionValues.0 = .allMovies
-            listingOptionValues.1 = []
-        }
-
-        self.stateChangeObservable.onNext(
-            self.currentState.copy(
-                listingOptionValues: listingOptionValues
+            sectionHeaders.insert(contentsOf: array, at: listingOption.rawValue + 1)
+            self.stateChangeObservable.onNext(
+                self.currentState.copy(
+                    selectedHeader: (listingOption, "", index),
+                    sectionHeaders: sectionHeaders
+                )
             )
-        )
+        } else if let subHeading = self.currentState.sectionHeaders[index] as? String {
+            if subHeading == self.currentState.selectedHeader.1 {
+                self.stateChangeObservable.onNext(
+                    self.currentState.copy(
+                        selectedHeader: (self.currentState.selectedHeader.0, "", index)
+                    )
+                )
+                return
+            }
+
+            self.stateChangeObservable.onNext(
+                self.currentState.copy(
+                    selectedHeader: (self.currentState.selectedHeader.0, subHeading, index)
+                )
+            )
+        }
+    }
+
+    func cellSelected(indexPath: IndexPath) {
+        print("kums: cell-\(indexPath)")
     }
 }
 

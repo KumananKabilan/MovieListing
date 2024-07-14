@@ -16,7 +16,7 @@ class ListingTableViewCell: UITableViewCell {
     // MARK: - IBOutlets
 
     @IBOutlet private weak var headerViewStackView: UIStackView!
-    @IBOutlet private weak var movieTitle: UILabel!
+    @IBOutlet private weak var headerLabel: UILabel!
     @IBOutlet private weak var stackViewLeadingConstraint: NSLayoutConstraint!
     @IBOutlet private weak var collapseImageView: UIImageView!
 
@@ -28,7 +28,7 @@ class ListingTableViewCell: UITableViewCell {
 
     private func reset() {
         self.headerViewStackView.isHidden = true
-        self.movieTitle.text = "..."
+        self.headerLabel.text = "..."
         self.stackViewLeadingConstraint.constant = self.defaultHeaderPadding
     }
 }
@@ -37,13 +37,17 @@ class ListingTableViewCell: UITableViewCell {
 
 extension ListingTableViewCell {
     func configureAsHeader(
-        with text: String,
-        isSectionHeader: Bool,
+        with data: Any,
         isCollapsed: Bool
     ) {
         self.headerViewStackView.isHidden = false
-        self.movieTitle.text = text
-        self.stackViewLeadingConstraint.constant = isSectionHeader ? self.defaultHeaderPadding : self.subHeadingPadding
         self.collapseImageView.transform = isCollapsed ? .identity : CGAffineTransform(rotationAngle: CGFloat.pi)
+        if let listingOption = data as? ListingOptions {
+            self.headerLabel.text = listingOption.title
+            self.stackViewLeadingConstraint.constant = self.defaultHeaderPadding
+        } else if let subHeading = data as? String {
+            self.headerLabel.text = subHeading
+            self.stackViewLeadingConstraint.constant = self.subHeadingPadding
+        }
     }
 }

@@ -32,20 +32,11 @@ enum ListingOptions: Int, CaseIterable {
         }
     }
 
-    func movieData(movieData: [MovieCoreData]) -> [String] {
-        var array: [String] = []
-        for (index, movie) in movieData.enumerated() {
-            switch self {
-            case .year:
-                array.append(movie.year)
-            case .genre:
-                array.append(movie.genre)
-            case .directors:
-                array.append(movie.director)
-            case .actors:
-                array.append(movie.actors)
-            default:
-                break
+    static var allOptions: [ListingOptions] {
+        var array: [ListingOptions] = []
+        ListingOptions.allCases.forEach { listingOption in
+            if listingOption != .none {
+                array.append(listingOption)
             }
         }
         return array

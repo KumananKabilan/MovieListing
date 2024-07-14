@@ -68,13 +68,10 @@ private extension ListingViewController {
 
 extension ListingViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        ListingOptions.allCases.count - 1
+        self.stateRepresenting.sectionHeaders.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if ListingOptions.allCases[section] == self.stateRepresenting.listingOptionValues.0 {
-            return self.stateRepresenting.listingOptionValues.1.count + 1
-        }
         return 1
     }
 
@@ -83,51 +80,19 @@ extension ListingViewController: UITableViewDataSource {
             return UITableViewCell()
         }
 
-        if indexPath.section == self.stateRepresenting.listingOptionValues.0.rawValue,
-           indexPath.row != 0 {
-            switch self.stateRepresenting.listingOptionValues.0 {
-            case .year:
-                cell.configureAsHeader(
-                    with: self.stateRepresenting.listingOptionValues.1[indexPath.row - 1],
-                    isSectionHeader: false,
-                    isCollapsed: true
-                )
-            case .genre:
-                cell.configureAsHeader(
-                    with: self.stateRepresenting.listingOptionValues.1[indexPath.row - 1],
-                    isSectionHeader: false,
-                    isCollapsed: true
-                )
-            case .directors:
-                cell.configureAsHeader(
-                    with: self.stateRepresenting.listingOptionValues.1[indexPath.row - 1],
-                    isSectionHeader: false,
-                    isCollapsed: true
-                )
-            case .actors:
-                cell.configureAsHeader(
-                    with: self.stateRepresenting.listingOptionValues.1[indexPath.row - 1],
-                    isSectionHeader: false,
-                    isCollapsed: true
-                )
-            case .allMovies:
-                cell.configureAsHeader(
-                    with: "",
-                    isSectionHeader: false,
-                    isCollapsed: true
-                )
-            case .none:
-                cell.configureAsHeader(
-                    with: "",
-                    isSectionHeader: false,
-                    isCollapsed: true
-                )
+        if indexPath.row == 0 {
+            var isCollapsed: Bool {
+                if let listingOption = self.stateRepresenting.sectionHeaders[indexPath.section] as? ListingOptions {
+                    listingOption != self.stateRepresenting.selectedHeader.0
+                } else if let subHeading = self.stateRepresenting.sectionHeaders[indexPath.section] as? String {
+                    subHeading != self.stateRepresenting.selectedHeader.1
+                } else {
+                    false
+                }
             }
-        } else {
             cell.configureAsHeader(
-                with: ListingOptions.allCases[indexPath.section].title,
-                isSectionHeader: true,
-                isCollapsed: self.stateRepresenting.listingOptionValues.0.rawValue != indexPath.section
+                with: self.stateRepresenting.sectionHeaders[indexPath.section],
+                isCollapsed: isCollapsed
             )
         }
 
@@ -145,12 +110,7 @@ extension ListingViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            let listingOption = ListingOptions.allCases[indexPath.section]
-            if listingOption == self.stateRepresenting.listingOptionValues.0 {
-                self.viewModel.headerCellSelected(listingOption: .none)
-            } else {
-                self.viewModel.headerCellSelected(listingOption: listingOption)
-            }
+            self.viewModel.headerCellSelected(index: indexPath.section)
         }
     }
 }
