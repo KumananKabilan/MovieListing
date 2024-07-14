@@ -24,6 +24,7 @@ class ListingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.title = "Movie Database"
         self.configureTableView()
         self.subscribeToStateChange()
     }
@@ -36,8 +37,8 @@ private extension ListingViewController {
         self.listingTableView.dataSource = self
         self.listingTableView.delegate = self
         self.listingTableView.register(
-            UINib(nibName: "ListingTableViewCell", bundle: nil),
-            forCellReuseIdentifier: "ListingTableViewCell"
+            ListingTableViewCell.nib,
+            forCellReuseIdentifier: ListingTableViewCell.identifier
         )
     }
 
@@ -127,6 +128,8 @@ extension ListingViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
             self.viewModel.headerCellSelected(index: indexPath.section)
+        } else {
+            
         }
     }
 }

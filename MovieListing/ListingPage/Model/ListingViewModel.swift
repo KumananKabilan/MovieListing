@@ -125,10 +125,7 @@ private extension ListingViewModel {
         }
         self.stateChangeObservable.onNext(
             self.currentState.copy(
-                coreDataActionState: .fetchingSuccess, 
-                moviesArray: self.getMovieData(
-                    from: moviesArray
-                )
+                coreDataActionState: .fetchingSuccess
             )
         )
     }
@@ -164,7 +161,7 @@ extension ListingViewModel {
             sectionHeaders = ListingOptions.allOptions
             var array: [String] = []
             var cellData: [MovieData]? = nil
-            self.currentState.moviesArray.forEach { movieData in
+            self.getMovieData(from: self.fetchFromCoreData()).forEach { movieData in
                 switch listingOption {
                 case .year:
                     if !array.contains(movieData.year) {

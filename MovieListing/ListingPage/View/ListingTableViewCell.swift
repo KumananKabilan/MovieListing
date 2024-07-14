@@ -10,6 +10,9 @@ import UIKit
 class ListingTableViewCell: UITableViewCell {
     // MARK: - Properties
 
+    static let identifier: String = "ListingTableViewCell"
+    static let nib: UINib = UINib(nibName: ListingTableViewCell.identifier, bundle: nil)
+
     private let subHeadingPadding: CGFloat = 30.0
     private let defaultHeaderPadding: CGFloat = 10.0
 

@@ -57,7 +57,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 private extension SceneDelegate {
     func openListing() {
         guard let window,
-              let listingViewController = window.rootViewController as? ListingViewController,
+              let navController = window.rootViewController as? UINavigationController,
+              let listingViewController = navController.topViewController as? ListingViewController,
               let appDelegate = (UIApplication.shared.delegate as? AppDelegate),
               let persistentContainer = appDelegate.persistentContainer
         else {

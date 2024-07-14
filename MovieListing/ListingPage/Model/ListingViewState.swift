@@ -9,7 +9,6 @@ import Foundation
 
 struct ListingViewState {
     let coreDataActionState: CoreDataActionState
-    let moviesArray: [MovieData]
     let selectedHeader: (ListingOptions, String, Int)
     let sectionHeaders: [Any]
     let cellItemData: [MovieData]
@@ -28,7 +27,6 @@ struct ListingViewState {
 extension ListingViewState {
     static let `default` = ListingViewState(
         coreDataActionState: .none,
-        moviesArray: [],
         selectedHeader: (ListingOptions.none, "", -1),
         sectionHeaders: ListingOptions.allOptions,
         cellItemData: []
@@ -36,14 +34,12 @@ extension ListingViewState {
 
     func copy(
         coreDataActionState: CoreDataActionState? = nil,
-        moviesArray: [MovieData]? = nil,
         selectedHeader: (ListingOptions, String, Int)? = nil,
         sectionHeaders: [Any]? = nil,
         cellItemData: [MovieData]? = nil
     ) -> ListingViewState {
         ListingViewState(
             coreDataActionState: coreDataActionState ?? self.coreDataActionState,
-            moviesArray: moviesArray ?? self.moviesArray,
             selectedHeader: selectedHeader ?? self.selectedHeader,
             sectionHeaders: sectionHeaders ?? self.sectionHeaders,
             cellItemData: cellItemData ?? self.cellItemData
