@@ -11,7 +11,8 @@ import UIKit
 class ListingViewController: UIViewController {
     // MARK: - Properties
 
-    private let listingTableViewHeight: CGFloat = 60.0
+    private let headerCellHeight: CGFloat = 60.0
+    private let movieCellHeight: CGFloat = 100.0
     private let disposeBag = DisposeBag()
     private var stateRepresenting: ListingViewState = .default
     var viewModel: ListingViewModel!
@@ -72,6 +73,14 @@ extension ListingViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if let subHeading = self.stateRepresenting.sectionHeaders[section] as? String,
+           subHeading == self.stateRepresenting.selectedHeader.1 {
+            return self.stateRepresenting.cellItemData.count + 1
+        }
+        if self.stateRepresenting.selectedHeader.0 == .allMovies,
+           section == ListingOptions.allMovies.rawValue {
+            return self.stateRepresenting.cellItemData.count + 1
+        }
         return 1
     }
 
@@ -94,6 +103,10 @@ extension ListingViewController: UITableViewDataSource {
                 with: self.stateRepresenting.sectionHeaders[indexPath.section],
                 isCollapsed: isCollapsed
             )
+        } else {
+            cell.configureMovieCell(
+                using: self.stateRepresenting.cellItemData[indexPath.row - 1]
+            )
         }
 
         cell.selectionStyle = .none
@@ -105,7 +118,10 @@ extension ListingViewController: UITableViewDataSource {
 
 extension ListingViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return self.listingTableViewHeight
+        if indexPath.row == 0 {
+            return self.headerCellHeight
+        }
+        return self.movieCellHeight
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

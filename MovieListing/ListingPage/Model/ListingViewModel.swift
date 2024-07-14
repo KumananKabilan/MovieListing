@@ -163,6 +163,7 @@ extension ListingViewModel {
             var sectionHeaders: [Any] = []
             sectionHeaders = ListingOptions.allOptions
             var array: [String] = []
+            var cellData: [MovieData]? = nil
             self.currentState.moviesArray.forEach { movieData in
                 switch listingOption {
                 case .year:
@@ -187,6 +188,8 @@ extension ListingViewModel {
                             array.append(actor)
                         }
                     }
+                case .allMovies:
+                    cellData = self.getMovieData(from: self.fetchFromCoreData())
                 default:
                     break
                 }
@@ -195,7 +198,8 @@ extension ListingViewModel {
             self.stateChangeObservable.onNext(
                 self.currentState.copy(
                     selectedHeader: (listingOption, "", index),
-                    sectionHeaders: sectionHeaders
+                    sectionHeaders: sectionHeaders,
+                    cellItemData: cellData
                 )
             )
         } else if let subHeading = self.currentState.sectionHeaders[index] as? String {
@@ -208,9 +212,37 @@ extension ListingViewModel {
                 return
             }
 
+            var movieData: [MovieData] = []
+            let fetchedData = self.getMovieData(from: self.fetchFromCoreData())
+            fetchedData.forEach { fetchData in
+                switch self.currentState.selectedHeader.0 {
+                case .year:
+                    if fetchData.year == subHeading {
+                        movieData.append(fetchData)
+                    }
+                case .genre:
+                    if fetchData.genre.contains(subHeading) {
+                        movieData.append(fetchData)
+                    }
+                case .directors:
+                    if fetchData.director.contains(subHeading) {
+                        movieData.append(fetchData)
+                    }
+                case .actors:
+                    if fetchData.actors.contains(subHeading) {
+                        movieData.append(fetchData)
+                    }
+                case .allMovies:
+                    movieData = fetchedData
+                default:
+                    break
+                }
+            }
+
             self.stateChangeObservable.onNext(
                 self.currentState.copy(
-                    selectedHeader: (self.currentState.selectedHeader.0, subHeading, index)
+                    selectedHeader: (self.currentState.selectedHeader.0, subHeading, index),
+                    cellItemData: movieData
                 )
             )
         }
