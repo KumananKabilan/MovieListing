@@ -104,9 +104,13 @@ private extension ListingViewModel {
         )
     }
 
-    func fetchFromCoreData() -> [MovieCoreData] {
+    func fetchFromCoreData(for query: String? = nil) -> [MovieCoreData] {
         do {
-            let fetchedData = try self.managedObjectContext.fetch(Movie.fetchRequest())
+            let fetchRequest = Movie.fetchRequest()
+            if let query {
+                fetchRequest.predicate = NSPredicate(format: "title CONTAINS[cd] %@ OR genre CONTAINS[cd] %@ OR actors CONTAINS[cd] %@ OR director CONTAINS[cd] %@", query, query, query, query)
+            }
+            let fetchedData = try self.managedObjectContext.fetch(fetchRequest)
             return fetchedData.helperMovieData
         } catch {
             self.stateChangeObservable.onNext(
@@ -244,9 +248,30 @@ extension ListingViewModel {
             )
         }
     }
+    
+    func handleSearch(for query: String) {
+        guard query != "" else {
+            self.stateChangeObservable.onNext(
+                ListingViewState.default.copy(
+                    cellItemData: [],
+                    isSearching: true
+                )
+            )
+            return
+        }
+        let fetchedData = self.getMovieData(from: self.fetchFromCoreData(for: query))
+        self.stateChangeObservable.onNext(
+            ListingViewState.default.copy(
+                cellItemData: fetchedData,
+                isSearching: true
+            )
+        )
+    }
 
-    func cellSelected(indexPath: IndexPath) {
-        print("kums: cell-\(indexPath)")
+    func searchControllerDismissed() {
+        self.stateChangeObservable.onNext(
+            ListingViewState.default
+        )
     }
 }
 

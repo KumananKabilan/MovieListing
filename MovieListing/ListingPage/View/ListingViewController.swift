@@ -17,6 +17,15 @@ class ListingViewController: UIViewController {
     private var stateRepresenting: ListingViewState = .default
     var viewModel: ListingViewModel!
 
+    var searchController: UISearchController {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search for title/genre/actor/director."
+        searchController.definesPresentationContext = true
+        return searchController
+    }
+
     // MARK: - IBOutlets
 
     @IBOutlet private weak var listingTableView: UITableView!
@@ -25,6 +34,7 @@ class ListingViewController: UIViewController {
         super.viewDidLoad()
 
         self.title = "Movie Database"
+        self.navigationItem.searchController = self.searchController
         self.configureTableView()
         self.subscribeToStateChange()
     }
@@ -70,10 +80,16 @@ private extension ListingViewController {
 
 extension ListingViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        self.stateRepresenting.sectionHeaders.count
+        guard !self.stateRepresenting.isSearching else {
+            return 1
+        }
+        return self.stateRepresenting.sectionHeaders.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard !self.stateRepresenting.isSearching else {
+            return self.stateRepresenting.cellItemData.count
+        }
         if let subHeading = self.stateRepresenting.sectionHeaders[section] as? String,
            subHeading == self.stateRepresenting.selectedHeader.1 {
             return self.stateRepresenting.cellItemData.count + 1
@@ -88,6 +104,11 @@ extension ListingViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ListingTableViewCell", for: indexPath) as? ListingTableViewCell else {
             return UITableViewCell()
+        }
+
+        if self.stateRepresenting.isSearching {
+            cell.configureMovieCell(using: self.stateRepresenting.cellItemData[indexPath.row])
+            return cell
         }
 
         if indexPath.row == 0 {
@@ -119,17 +140,20 @@ extension ListingViewController: UITableViewDataSource {
 
 extension ListingViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        guard !self.stateRepresenting.isSearching else {
+            return self.movieCellHeight
+        }
         if indexPath.row == 0 {
             return self.headerCellHeight
+        } else {
+            return self.movieCellHeight
         }
-        return self.movieCellHeight
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 0 {
-            self.viewModel.headerCellSelected(index: indexPath.section)
-        } else {
-            let listingStoryboard = UIStoryboard(name: "Listing", bundle: nil)
+        let listingStoryboard = UIStoryboard(name: "Listing", bundle: nil)
+        guard !self.stateRepresenting.isSearching
+        else {
             if let movieDetailsViewController = listingStoryboard.instantiateViewController(withIdentifier: "MovieDetailsViewController") as? MovieDetailsViewController {
                 movieDetailsViewController.modalPresentationStyle = .formSheet
                 movieDetailsViewController.configure(
@@ -139,6 +163,36 @@ extension ListingViewController: UITableViewDelegate {
                 movieDetailsViewController.title = "Movie Details"
                 self.present(navController, animated: true)
             }
+            return
+        }
+        if indexPath.row == 0 {
+            self.viewModel.headerCellSelected(index: indexPath.section)
+        } else {
+            if let movieDetailsViewController = listingStoryboard.instantiateViewController(withIdentifier: "MovieDetailsViewController") as? MovieDetailsViewController {
+                movieDetailsViewController.modalPresentationStyle = .formSheet
+                movieDetailsViewController.configure(
+                    with: self.stateRepresenting.cellItemData[indexPath.row - 1]
+                )
+                let navController = UINavigationController(rootViewController: movieDetailsViewController)
+                movieDetailsViewController.title = "Movie Details"
+                self.present(navController, animated: true)
+            }
+        }
+    }
+}
+
+// MARK: - UISearchControllerDelegate Conformance
+
+extension ListingViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let query = searchController.searchBar.searchTextField.text else {
+            return
+        }
+
+        if searchController.isActive {
+            self.viewModel.handleSearch(for: query)
+        } else {
+            self.viewModel.searchControllerDismissed()
         }
     }
 }

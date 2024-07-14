@@ -12,6 +12,7 @@ struct ListingViewState {
     let selectedHeader: (ListingOptions, String, Int)
     let sectionHeaders: [Any]
     let cellItemData: [MovieData]
+    let isSearching: Bool
 
     enum CoreDataActionState {
         case none
@@ -29,20 +30,23 @@ extension ListingViewState {
         coreDataActionState: .none,
         selectedHeader: (ListingOptions.none, "", -1),
         sectionHeaders: ListingOptions.allOptions,
-        cellItemData: []
+        cellItemData: [],
+        isSearching: false
     )
 
     func copy(
         coreDataActionState: CoreDataActionState? = nil,
         selectedHeader: (ListingOptions, String, Int)? = nil,
         sectionHeaders: [Any]? = nil,
-        cellItemData: [MovieData]? = nil
+        cellItemData: [MovieData]? = nil,
+        isSearching: Bool? = nil
     ) -> ListingViewState {
         ListingViewState(
             coreDataActionState: coreDataActionState ?? self.coreDataActionState,
             selectedHeader: selectedHeader ?? self.selectedHeader,
             sectionHeaders: sectionHeaders ?? self.sectionHeaders,
-            cellItemData: cellItemData ?? self.cellItemData
+            cellItemData: cellItemData ?? self.cellItemData,
+            isSearching: isSearching ?? self.isSearching
         )
     }
 }
