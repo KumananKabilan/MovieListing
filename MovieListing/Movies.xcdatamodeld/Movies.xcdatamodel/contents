@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22757" systemVersion="23E224" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="Movies" representedClassName="Movies" syncable="YES" codeGenerationType="class">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22757" systemVersion="23E224" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="Movie" representedClassName="Movie" syncable="YES" codeGenerationType="class">
         <attribute name="actors" attributeType="String"/>
         <attribute name="awards" attributeType="String"/>
-        <attribute name="boxOffice" attributeType="String"/>
+        <attribute name="boxOffice" optional="YES" attributeType="String"/>
         <attribute name="country" attributeType="String"/>
         <attribute name="director" attributeType="String"/>
-        <attribute name="dvd" attributeType="String"/>
+        <attribute name="dvd" optional="YES" attributeType="String"/>
         <attribute name="genre" attributeType="String"/>
         <attribute name="imdbID" attributeType="String"/>
         <attribute name="imdbRating" attributeType="String"/>
@@ -15,14 +15,15 @@
         <attribute name="metaScore" attributeType="String"/>
         <attribute name="plot" attributeType="String"/>
         <attribute name="poster" attributeType="String"/>
-        <attribute name="production" attributeType="String"/>
+        <attribute name="production" optional="YES" attributeType="String"/>
         <attribute name="rated" attributeType="String"/>
+        <attribute name="ratings" attributeType="String" valueTransformerName="" customClassName="[RatingData]"/>
         <attribute name="released" attributeType="String"/>
         <attribute name="response" attributeType="String"/>
         <attribute name="runTime" attributeType="String"/>
         <attribute name="title" attributeType="String"/>
         <attribute name="type" attributeType="String"/>
-        <attribute name="website" attributeType="String"/>
+        <attribute name="website" optional="YES" attributeType="String"/>
         <attribute name="writer" attributeType="String"/>
         <attribute name="year" attributeType="String"/>
     </entity>

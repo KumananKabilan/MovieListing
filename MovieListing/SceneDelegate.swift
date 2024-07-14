@@ -56,7 +56,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 private extension SceneDelegate {
     func openListing() {
-        let storyboard = UIStoryboard(name: "Listing", bundle: nil)
         guard let window,
               let listingViewController = window.rootViewController as? ListingViewController,
               let appDelegate = (UIApplication.shared.delegate as? AppDelegate),

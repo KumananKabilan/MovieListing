@@ -35,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Core Data stack
 
     lazy var persistentContainer: NSPersistentContainer? = {
-        switch PersistentContainerWrapper(name: "MovieListing").containerState {
+        switch PersistentContainerWrapper(name: "Movies").containerState {
         case let .loaded(container):
             return container
         default:

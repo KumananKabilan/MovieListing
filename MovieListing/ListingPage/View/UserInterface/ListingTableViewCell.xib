@@ -16,25 +16,42 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kOP-aA-YZa">
-                        <rect key="frame" x="15.000000000000004" y="11.666666666666664" width="41.333333333333343" height="21"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <nil key="textColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
+                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dth-YV-khj">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kOP-aA-YZa">
+                                <rect key="frame" x="0.0" y="0.0" width="276" height="44"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.up" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="brf-WV-TIn">
+                                <rect key="frame" x="276" y="4.6666666666666643" width="44" height="33.999999999999993"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="44" id="cr2-ag-JCo"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                    </stackView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="kOP-aA-YZa" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="hAR-Us-N6o"/>
-                    <constraint firstItem="kOP-aA-YZa" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="rb0-f9-6m0"/>
-                    <constraint firstItem="kOP-aA-YZa" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="H2p-sc-9uM" secondAttribute="trailing" constant="-50" id="v6K-h7-8df"/>
+                    <constraint firstItem="dth-YV-khj" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="AGE-ZW-iAO"/>
+                    <constraint firstItem="dth-YV-khj" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="Ocl-ib-PUk"/>
+                    <constraint firstItem="dth-YV-khj" firstAttribute="bottom" secondItem="H2p-sc-9uM" secondAttribute="bottom" id="Tlg-wp-jlj"/>
+                    <constraint firstItem="dth-YV-khj" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailing" id="oGi-ow-9CY"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
+                <outlet property="collapseImageView" destination="brf-WV-TIn" id="f92-5s-TOp"/>
                 <outlet property="movieTitle" destination="kOP-aA-YZa" id="b93-n6-hhr"/>
+                <outlet property="stackViewLeadingConstraint" destination="Ocl-ib-PUk" id="zOd-KI-hGO"/>
             </connections>
             <point key="canvasLocation" x="-66" y="20"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="chevron.up" catalog="system" width="128" height="70"/>
+    </resources>
 </document>
