@@ -36,14 +36,14 @@ private extension ListingViewModel {
         do {
             let data = try Data(contentsOf: url)
             let decoder = JSONDecoder()
-            let moviesData = try decoder.decode([MovieData].self, from: data)
+            let moviesData = try decoder.decode([MovieCoreData].self, from: data)
             saveToCoreData(moviesData: moviesData)
         } catch {
             print("Failed to load and decode JSON: \(error)")
         }
     }
 
-    func saveToCoreData(moviesData: [MovieData]) {
+    func saveToCoreData(moviesData: [MovieCoreData]) {
         for (index, movieData) in moviesData.enumerated() {
             let moviesEntity = Movie(context: self.managedObjectContext)
             moviesEntity.actors = movieData.actors
@@ -62,7 +62,6 @@ private extension ListingViewModel {
             moviesEntity.poster = movieData.poster
             moviesEntity.production = movieData.production
             moviesEntity.rated = movieData.rated
-//            moviesEntity.ratings = movieData.ratings
             moviesEntity.released = movieData.released
             moviesEntity.response = movieData.response
             moviesEntity.runTime = movieData.runTime
@@ -82,23 +81,39 @@ private extension ListingViewModel {
                 print("Error encoding RatingData to JSON: \(error.localizedDescription)")
             }
             if index == (moviesData.count - 1) {
-                self.stateChangeObservable.onNext(self.currentState.copy(coreDataActionState: .savingSuccess))
+                self.stateChangeObservable.onNext(
+                    self.currentState.copy(
+                        coreDataActionState: .savingSuccess
+                    )
+                )
             }
             do {
                 try self.managedObjectContext.save()
             } catch {
-                self.stateChangeObservable.onNext(self.currentState.copy(coreDataActionState: .failedToSave))
+                self.stateChangeObservable.onNext(
+                    self.currentState.copy(
+                        coreDataActionState: .failedToSave
+                    )
+                )
             }
         }
-        self.stateChangeObservable.onNext(self.currentState.copy(coreDataActionState: .savingSuccess))
+        self.stateChangeObservable.onNext(
+            self.currentState.copy(
+                coreDataActionState: .savingSuccess
+            )
+        )
     }
 
-    func initiateFetchFromCoreData() -> [MovieData] {
+    func initiateFetchFromCoreData() -> [MovieCoreData] {
         do {
             let fetchedData = try self.managedObjectContext.fetch(Movie.fetchRequest())
             return fetchedData.helperMovieData
         } catch {
-            self.stateChangeObservable.onNext(self.currentState.copy(coreDataActionState: .failedToFetch))
+            self.stateChangeObservable.onNext(
+                self.currentState.copy(
+                    coreDataActionState: .failedToFetch
+                )
+            )
         }
         return []
     }
@@ -108,10 +123,17 @@ private extension ListingViewModel {
         if moviesArray.isEmpty {
             self.importJSONData()
         }
-        self.stateChangeObservable.onNext(self.currentState.copy(coreDataActionState: .fetchingSuccess, moviesArray: moviesArray))
+        self.stateChangeObservable.onNext(
+            self.currentState.copy(
+                coreDataActionState: .fetchingSuccess, 
+                moviesArray: self.getMovieData(
+                    from: moviesArray
+                )
+            )
+        )
     }
 
-    func resetCoreData() { // Used when SampleData was replaced with OriginalData
+    func resetCoreData() {
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Movie.fetchRequest()
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         
@@ -127,7 +149,7 @@ private extension ListingViewModel {
 // MARK: - Helpers
 
 extension ListingViewModel {
-    func cellSelected(listingOption: ListingOptions) {
+    func headerCellSelected(listingOption: ListingOptions) {
         var listingOptionValues: (ListingOptions, [String])
         switch listingOption {
         case .none:
@@ -147,7 +169,7 @@ extension ListingViewModel {
             var array: [String] = []
             self.currentState.moviesArray.forEach { movieData in
                 if !array.contains(movieData.genre) {
-                    array.append(movieData.genre)
+                    array.append(contentsOf: movieData.genre)
                 }
             }
             listingOptionValues.1 = array
@@ -156,7 +178,7 @@ extension ListingViewModel {
             var array: [String] = []
             self.currentState.moviesArray.forEach { movieData in
                 if !array.contains(movieData.director) {
-                    array.append(movieData.director)
+                    array.append(contentsOf: movieData.director)
                 }
             }
             listingOptionValues.1 = array
@@ -165,7 +187,7 @@ extension ListingViewModel {
             var array: [String] = []
             self.currentState.moviesArray.forEach { movieData in
                 if !array.contains(movieData.actors) {
-                    array.append(movieData.actors)
+                    array.append(contentsOf: movieData.actors)
                 }
             }
             listingOptionValues.1 = array
@@ -174,6 +196,78 @@ extension ListingViewModel {
             listingOptionValues.1 = []
         }
 
-        self.stateChangeObservable.onNext(self.currentState.copy(listingOptionValues: listingOptionValues))
+        self.stateChangeObservable.onNext(
+            self.currentState.copy(
+                listingOptionValues: listingOptionValues
+            )
+        )
+    }
+}
+
+// MARK: - Private Helpers
+
+private extension ListingViewModel {
+    func getMovieData(from moviesCoreData: [MovieCoreData]) -> [MovieData] {
+        var movieData: [MovieData] = []
+        moviesCoreData.forEach { movieCoreData in
+            var actors = movieCoreData.actors.components(separatedBy: ",")
+            var directors = movieCoreData.director.components(separatedBy: ",")
+            var genre = movieCoreData.genre.components(separatedBy: ",")
+            
+            actors = actors.compactMap({ _actor in
+                var actor = _actor
+                if actor.hasPrefix(" ") {
+                    actor.remove(at: actor.startIndex)
+                }
+                return actor
+            })
+            
+            directors = directors.compactMap({ _director in
+                var director = _director
+                if director.hasPrefix(" ") {
+                    director.remove(at: director.startIndex)
+                }
+                return director
+            })
+            
+            genre = genre.compactMap({ _genre in
+                var genre = _genre
+                if genre.hasPrefix(" ") {
+                    genre.remove(at: genre.startIndex)
+                }
+                return genre
+            })
+            
+            movieData.append(
+                MovieData(
+                    actors: actors,
+                    awards: movieCoreData.awards,
+                    boxOffice: movieCoreData.boxOffice,
+                    country: movieCoreData.country,
+                    director: directors,
+                    dvd: movieCoreData.dvd,
+                    genre: genre,
+                    imdbID: movieCoreData.imdbID,
+                    imdbRating: movieCoreData.imdbRating,
+                    imdbVotes: movieCoreData.imdbVotes,
+                    language: movieCoreData.language,
+                    metaScore: movieCoreData.metaScore,
+                    plot: movieCoreData.plot,
+                    poster: movieCoreData.poster,
+                    production: movieCoreData.production,
+                    rated: movieCoreData.rated,
+                    ratings: movieCoreData.ratings,
+                    released: movieCoreData.released,
+                    response: movieCoreData.response,
+                    runTime: movieCoreData.runTime,
+                    title: movieCoreData.title,
+                    type: movieCoreData.type,
+                    website: movieCoreData.website,
+                    writer: movieCoreData.writer,
+                    year: movieCoreData.year
+                )
+            )
+        }
+        return movieData
     }
 }

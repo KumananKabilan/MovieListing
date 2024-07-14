@@ -8,8 +8,8 @@
 import Foundation
 
 extension Array where Element == Movie {
-    var helperMovieData: [MovieData] {
-        var array: [MovieData] = []
+    var helperMovieData: [MovieCoreData] {
+        var array: [MovieCoreData] = []
         self.forEach { movie in
             if let actors = movie.actors,
                let awards = movie.awards,
@@ -45,7 +45,7 @@ extension Array where Element == Movie {
                 } catch {
                     print("Error decoding JSON: \(error.localizedDescription)")
                 }
-                let movieData: MovieData = MovieData(
+                let movieData: MovieCoreData = MovieCoreData(
                     actors: actors,
                     awards: awards,
                     boxOffice: boxOffice,

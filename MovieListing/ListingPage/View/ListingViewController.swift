@@ -131,7 +131,7 @@ extension ListingViewController: UITableViewDataSource {
             )
         }
 
-        cell.selectionStyle = .default
+        cell.selectionStyle = .none
         return cell
     }
 }
@@ -144,11 +144,13 @@ extension ListingViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let listingOption = ListingOptions.allCases[indexPath.section]
-        if listingOption == self.stateRepresenting.listingOptionValues.0 {
-            self.viewModel.cellSelected(listingOption: .none)
-        } else {
-            self.viewModel.cellSelected(listingOption: listingOption)
+        if indexPath.row == 0 {
+            let listingOption = ListingOptions.allCases[indexPath.section]
+            if listingOption == self.stateRepresenting.listingOptionValues.0 {
+                self.viewModel.headerCellSelected(listingOption: .none)
+            } else {
+                self.viewModel.headerCellSelected(listingOption: listingOption)
+            }
         }
     }
 }
