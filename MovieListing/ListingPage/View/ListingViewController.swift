@@ -129,7 +129,16 @@ extension ListingViewController: UITableViewDelegate {
         if indexPath.row == 0 {
             self.viewModel.headerCellSelected(index: indexPath.section)
         } else {
-            
+            let listingStoryboard = UIStoryboard(name: "Listing", bundle: nil)
+            if let movieDetailsViewController = listingStoryboard.instantiateViewController(withIdentifier: "MovieDetailsViewController") as? MovieDetailsViewController {
+                movieDetailsViewController.modalPresentationStyle = .formSheet
+                movieDetailsViewController.configure(
+                    with: self.stateRepresenting.cellItemData[indexPath.row - 1]
+                )
+                let navController = UINavigationController(rootViewController: movieDetailsViewController)
+                movieDetailsViewController.title = "Movie Details"
+                self.present(navController, animated: true)
+            }
         }
     }
 }
