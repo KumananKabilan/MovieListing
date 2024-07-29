@@ -8,6 +8,8 @@
 import UIKit
 
 class MovieDetailsViewController: UIViewController {
+    static let identifier: String = "MovieDetailsViewController"
+
     // MARK: - Properties
 
     private var movieData: MovieData!

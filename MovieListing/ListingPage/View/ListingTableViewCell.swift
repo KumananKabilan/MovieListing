@@ -51,6 +51,30 @@ class ListingTableViewCell: UITableViewCell {
 // MARK: - Helpers
 
 extension ListingTableViewCell {
+    func configure(
+        using state: ListingViewState,
+        for indexPath: IndexPath
+    ) {
+        if state.isSearching {
+            self.configureMovieCell(using: state.cellItemData[indexPath.row])
+        }
+
+        if indexPath.row == 0 {
+            self.configureAsHeader(
+                with: state.sectionHeaders[indexPath.section],
+                isCollapsed: state.isSectionCollapsed(for: indexPath.section)
+            )
+        } else {
+            self.configureMovieCell(
+                using: state.cellItemData[indexPath.row - 1]
+            )
+        }
+    }
+}
+
+// MARK: - Private Helpers
+
+private extension ListingTableViewCell {
     func configureAsHeader(
         with data: Any,
         isCollapsed: Bool

@@ -9,7 +9,11 @@ import Foundation
 
 struct ListingViewState {
     let coreDataActionState: CoreDataActionState
-    let selectedHeader: (ListingOptions, String, Int)
+    let selectedHeader: (
+        listingOption: ListingOptions,
+        subHeading: String,
+        selectedIndex: Int
+    )
     let sectionHeaders: [Any]
     let cellItemData: [MovieData]
     let isSearching: Bool
@@ -48,6 +52,25 @@ extension ListingViewState {
             cellItemData: cellItemData ?? self.cellItemData,
             isSearching: isSearching ?? self.isSearching
         )
+    }
+
+    func numberOfRows(for sectionIndex: Int) -> Int {
+        guard !self.isSearching else {
+            return self.cellItemData.count
+        }
+        if let subHeading = self.sectionHeaders[sectionIndex] as? String,
+           subHeading == self.selectedHeader.subHeading {
+            return self.cellItemData.count + 1
+        }
+        if self.selectedHeader.0 == .allMovies,
+           sectionIndex == ListingOptions.allMovies.rawValue {
+            return self.cellItemData.count + 1
+        }
+        return 1
+    }
+
+    func isSectionCollapsed(for sectionIndex: Int) -> Bool {
+        !(self.numberOfRows(for: sectionIndex) > 1)
     }
 }
 

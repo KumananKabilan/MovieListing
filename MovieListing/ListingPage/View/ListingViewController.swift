@@ -17,14 +17,14 @@ class ListingViewController: UIViewController {
     private var stateRepresenting: ListingViewState = .default
     var viewModel: ListingViewModel!
 
-    var searchController: UISearchController {
+    lazy var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search for title/genre/actor/director."
         searchController.definesPresentationContext = true
         return searchController
-    }
+    }()
 
     // MARK: - IBOutlets
 
@@ -87,50 +87,19 @@ extension ListingViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard !self.stateRepresenting.isSearching else {
-            return self.stateRepresenting.cellItemData.count
-        }
-        if let subHeading = self.stateRepresenting.sectionHeaders[section] as? String,
-           subHeading == self.stateRepresenting.selectedHeader.1 {
-            return self.stateRepresenting.cellItemData.count + 1
-        }
-        if self.stateRepresenting.selectedHeader.0 == .allMovies,
-           section == ListingOptions.allMovies.rawValue {
-            return self.stateRepresenting.cellItemData.count + 1
-        }
-        return 1
+        return self.stateRepresenting.numberOfRows(for: section)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ListingTableViewCell", for: indexPath) as? ListingTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ListingTableViewCell.identifier, for: indexPath) as? ListingTableViewCell else {
             return UITableViewCell()
         }
 
-        if self.stateRepresenting.isSearching {
-            cell.configureMovieCell(using: self.stateRepresenting.cellItemData[indexPath.row])
-            return cell
-        }
-
-        if indexPath.row == 0 {
-            var isCollapsed: Bool {
-                if let listingOption = self.stateRepresenting.sectionHeaders[indexPath.section] as? ListingOptions {
-                    listingOption != self.stateRepresenting.selectedHeader.0
-                } else if let subHeading = self.stateRepresenting.sectionHeaders[indexPath.section] as? String {
-                    subHeading != self.stateRepresenting.selectedHeader.1
-                } else {
-                    false
-                }
-            }
-            cell.configureAsHeader(
-                with: self.stateRepresenting.sectionHeaders[indexPath.section],
-                isCollapsed: isCollapsed
-            )
-        } else {
-            cell.configureMovieCell(
-                using: self.stateRepresenting.cellItemData[indexPath.row - 1]
-            )
-        }
-
+        cell.configure(
+            using: self.stateRepresenting,
+            for: indexPath
+        )
+        
         cell.selectionStyle = .none
         return cell
     }
@@ -152,32 +121,20 @@ extension ListingViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let listingStoryboard = UIStoryboard(name: "Listing", bundle: nil)
-        guard !self.stateRepresenting.isSearching
+        guard (self.stateRepresenting.isSearching || indexPath.row > 0),
+              let movieDetailsViewController = listingStoryboard.instantiateViewController(withIdentifier: MovieDetailsViewController.identifier) as? MovieDetailsViewController
         else {
-            if let movieDetailsViewController = listingStoryboard.instantiateViewController(withIdentifier: "MovieDetailsViewController") as? MovieDetailsViewController {
-                movieDetailsViewController.modalPresentationStyle = .formSheet
-                movieDetailsViewController.configure(
-                    with: self.stateRepresenting.cellItemData[indexPath.row - 1]
-                )
-                let navController = UINavigationController(rootViewController: movieDetailsViewController)
-                movieDetailsViewController.title = "Movie Details"
-                self.present(navController, animated: true)
-            }
+            self.viewModel.headerCellSelected(index: indexPath.section)
             return
         }
-        if indexPath.row == 0 {
-            self.viewModel.headerCellSelected(index: indexPath.section)
-        } else {
-            if let movieDetailsViewController = listingStoryboard.instantiateViewController(withIdentifier: "MovieDetailsViewController") as? MovieDetailsViewController {
-                movieDetailsViewController.modalPresentationStyle = .formSheet
-                movieDetailsViewController.configure(
-                    with: self.stateRepresenting.cellItemData[indexPath.row - 1]
-                )
-                let navController = UINavigationController(rootViewController: movieDetailsViewController)
-                movieDetailsViewController.title = "Movie Details"
-                self.present(navController, animated: true)
-            }
-        }
+
+        movieDetailsViewController.modalPresentationStyle = .formSheet
+        movieDetailsViewController.configure(
+            with: self.stateRepresenting.cellItemData[indexPath.row - 1]
+        )
+        let navController = UINavigationController(rootViewController: movieDetailsViewController)
+        movieDetailsViewController.title = "Movie Details"
+        self.present(navController, animated: true)
     }
 }
 
